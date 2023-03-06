@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "main": "./public/electron.js",
   "author": "Zakaria Kerkeb",
-  "description": "Mettez la description de l'app ici",
+  "description": "la description de l'app ici",
   "homepage": "./",
   "private": true,
   "dependencies": {
@@ -50,7 +50,7 @@
   },
   "build": {
     "appId": "com.electron.myapp",
-    "productName": "My Electron App",
+    "productName": "Mini MiniShell",
     "files": [
       "build/**/*",
       "node_modules/**/*"

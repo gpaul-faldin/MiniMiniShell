@@ -1,35 +1,43 @@
 import React, { useEffect, useState } from "react";
+const Command = require("../commands/index");
 
 const Dashboard = () => {
   const [history, setHistory] = useState([]);
   const [command, setCommand] = useState("");
-  const [pwd, setPwd] = useState("");
-  const [chdir, setChdir] = useState(false);
+  const [result, setResult] = useState("");
+
+  const clearSubmit = () => {
+    if ((result || command) && result !== "0") {
+      if (result.length === 0) setHistory([...history, command]);
+      else setHistory([...history, command + " \n " + result]);
+    }
+    if (result === "0" && command !== "") {
+      setHistory([...history, command + ": command not found"]);
+    }
+    setCommand("");
+    setResult("0");
+  };
+
+  const parser = (str, setResult) => {
+    let parsed = str.toLowerCase().split(" ");
+    let command = parsed[0];
+    parsed.shift();
+
+    try {
+      Command[command](parsed, setResult);
+    } catch (e) {
+      clearSubmit();
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault(e);
-    setHistory([...history, command]);
-    setCommand("");
-    //console.log(window.pwd());
-    console.log(window.salut);
+    parser(command, setResult);
   };
 
   useEffect(() => {
-    setPwd(window.pwd());
-  }, []);
-
-  useEffect(() => {
-    if (chdir === true) {
-      setPwd(window.pwd());
-      setChdir(false);
-    }
-  }, [chdir]);
-
-  function handleChdir(e) {
-    e.preventDefault(e);
-    window.chdir("../");
-    setChdir(true);
-  }
+    clearSubmit();
+  }, [result]);
 
   function handleChange(event) {
     event.preventDefault(event);
@@ -37,13 +45,17 @@ const Dashboard = () => {
   }
 
   return (
-    <div>
-      <h1>{pwd}</h1>
-      <ul>
+    <div className="Main-div">
+      <h1>MiniMiniShell</h1>
+      <div className="histo-list">
         {history.length > 0
-          ? history.map((item, i) => <li key={i}>{item}</li>)
+          ? history.map((item, i) => (
+              <p className="histo-list-item" key={i}>
+                {item}
+              </p>
+            ))
           : ""}
-      </ul>
+      </div>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -51,9 +63,7 @@ const Dashboard = () => {
           name="name"
           onChange={handleChange}
         />
-        <button type="submit">Submit</button>
       </form>
-      <button onClick={handleChdir}>SALUT</button>
     </div>
   );
 };

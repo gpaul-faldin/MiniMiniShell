@@ -28,6 +28,23 @@
   color: #61dafb;
 }
 
+.histo-list {
+  flex: auto;
+  flex-direction: column;
+  height: 80vh;
+  overflow-y: scroll;
+  white-space: pre-wrap;
+}
+
+.histo-list-item {
+  margin: 1px;
+}
+
+.Main-div {
+  flex: auto;
+  flex-direction: column;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

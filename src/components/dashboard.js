@@ -40,20 +40,23 @@ const HistoryList = styled.div`
 const HistoryItem = styled.p`
   color: #ffffff;
   margin: 0;
+  white-space: pre-wrap;
 `;
 
 const Dashboard = () => {
   const [history, setHistory] = useState([]);
   const [command, setCommand] = useState("");
   const [result, setResult] = useState("");
+  const [PromptStr, setPromptStr] = useState("Zakaaaaaaa: ");
   const historyListRef = useRef(null);
 
   const clearSubmit = () => {
     if ((result || command) && result !== "0") {
       if (result.length === 0 && command !== "clear")
         setHistory([...history, command]);
-      else if (command === "clear") setHistory([]);
-      else setHistory([...history, command + " \n " + result]);
+      else if (command === "clear") {
+        setHistory([]);
+      } else setHistory([...history, `${PromptStr} ${command}\n${result}`]);
     }
     if (result === "0" && command !== "") {
       setHistory([...history, command + ": command not found"]);
@@ -64,9 +67,7 @@ const Dashboard = () => {
 
   const launcher = (str, setResult) => {
     let parsed = str.toLowerCase().split(" ");
-    console.log(parsed[1]);
     let command = parsed[0];
-    console.log(command);
     parsed.shift();
 
     try {
@@ -81,7 +82,6 @@ const Dashboard = () => {
     for (let x = 0; x < parsed.length; x++) {
       launcher(String(parsed[x]).trim(), setResult);
     }
-    setCommand("");
   };
 
   const handleSubmit = (e) => {
@@ -107,7 +107,7 @@ const Dashboard = () => {
         ))}
       </HistoryList>
       <InputLine>
-        <Prompt>salut@localhost:</Prompt>
+        <Prompt>{PromptStr}</Prompt>
         <form onSubmit={handleSubmit}>
           <Input
             type="text"

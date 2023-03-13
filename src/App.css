@@ -31,7 +31,7 @@
 .histo-list {
   flex: auto;
   flex-direction: column;
-  height: 80vh;
+  height: max-content;
   overflow-y: scroll;
   white-space: pre-wrap;
 }
@@ -41,6 +41,14 @@
 }
 
 .Main-div {
+  /* width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  overflow: auto;
+  line-height: 1.5; */
   flex: auto;
   flex-direction: column;
 }

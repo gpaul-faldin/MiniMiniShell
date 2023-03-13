@@ -84,6 +84,10 @@ const rm = async (args, setResult) => {
   setResult("");
 };
 
+const clear = async (args, setResult) => {
+  setResult("");
+};
+
 module.exports = {
   cd,
   pwd,
@@ -92,4 +96,5 @@ module.exports = {
   echo,
   cat,
   rm,
+  clear,
 };

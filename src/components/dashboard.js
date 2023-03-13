@@ -1,26 +1,72 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
 const Command = require("../commands/index");
+
+const Terminal = styled.div`
+  background-color: #1e1e1e;
+  font-family: monospace;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1rem;
+  height: 538px;
+`;
+
+const Prompt = styled.span`
+  color: #78dce8;
+`;
+
+const InputLine = styled.div`
+  display: flex;
+`;
+
+const Input = styled.input`
+  background-color: transparent;
+  border: none;
+  color: #ffffff;
+  flex: 1;
+  font-size: 1rem;
+  outline: none;
+  font-family: monospace;
+  width: 830px;
+`;
+
+const HistoryList = styled.div`
+  overflow-y: scroll;
+  height: calc(100% - 2rem);
+`;
+
+const HistoryItem = styled.p`
+  color: #ffffff;
+  margin: 0;
+`;
 
 const Dashboard = () => {
   const [history, setHistory] = useState([]);
   const [command, setCommand] = useState("");
   const [result, setResult] = useState("");
+  const historyListRef = useRef(null);
 
   const clearSubmit = () => {
     if ((result || command) && result !== "0") {
-      if (result.length === 0) setHistory([...history, command]);
+      if (result.length === 0 && command !== "clear")
+        setHistory([...history, command]);
+      else if (command === "clear") setHistory([]);
       else setHistory([...history, command + " \n " + result]);
     }
     if (result === "0" && command !== "") {
       setHistory([...history, command + ": command not found"]);
     }
-    setCommand("");
     setResult("0");
+    setCommand("");
   };
 
-  const parser = (str, setResult) => {
+  const launcher = (str, setResult) => {
     let parsed = str.toLowerCase().split(" ");
+    console.log(parsed[1]);
     let command = parsed[0];
+    console.log(command);
     parsed.shift();
 
     try {
@@ -30,6 +76,14 @@ const Dashboard = () => {
     }
   };
 
+  const parser = (str, setResult) => {
+    let parsed = str.split("&&");
+    for (let x = 0; x < parsed.length; x++) {
+      launcher(String(parsed[x]).trim(), setResult);
+    }
+    setCommand("");
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault(e);
     parser(command, setResult);
@@ -37,7 +91,8 @@ const Dashboard = () => {
 
   useEffect(() => {
     clearSubmit();
-  }, [result]);
+    historyListRef.current.scrollTop = historyListRef.current.scrollHeight;
+  }, [result, history]);
 
   function handleChange(event) {
     event.preventDefault(event);
@@ -45,26 +100,24 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="Main-div">
-      <h1>MiniMiniShell</h1>
-      <div className="histo-list">
-        {history.length > 0
-          ? history.map((item, i) => (
-              <p className="histo-list-item" key={i}>
-                {item}
-              </p>
-            ))
-          : ""}
-      </div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={command}
-          name="name"
-          onChange={handleChange}
-        />
-      </form>
-    </div>
+    <Terminal>
+      <HistoryList ref={historyListRef}>
+        {history.map((item, i) => (
+          <HistoryItem key={i}>{item}</HistoryItem>
+        ))}
+      </HistoryList>
+      <InputLine>
+        <Prompt>salut@localhost:</Prompt>
+        <form onSubmit={handleSubmit}>
+          <Input
+            type="text"
+            value={command}
+            name="name"
+            onChange={handleChange}
+          />
+        </form>
+      </InputLine>
+    </Terminal>
   );
 };
 
